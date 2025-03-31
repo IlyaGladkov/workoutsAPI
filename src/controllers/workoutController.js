@@ -11,7 +11,7 @@ const getOneWorkout = (req, res) => {
 }
 
 const createNewWorkout = (req, res) => {
-    const body = req
+    const { body } = req
 
     if (
         !body.name ||
