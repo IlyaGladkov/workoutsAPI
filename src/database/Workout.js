@@ -19,7 +19,50 @@ const createNewWorkout = (newWorkout) => {
     return newWorkout
 }
 
+const getOneWorkout = (workoutId) => {
+    const workout = DB.workouts.find(
+        (workout) => workoutId === workout.id
+    )
+
+    if (!workout) return
+
+    return workout
+}
+
+const updateOneWorkout = (workoutId , changes) => {
+    const indexForUpdate = DB.workouts.findIndex(
+        (workout) => workoutId === workout.id
+    )
+
+    if (indexForUpdate === -1) return
+
+    const updatedWorkout = {
+        ...DB.workouts[indexForUpdate],
+        ...changes,
+        updatedAt: new Date().toLocaleString('en-US', {
+            timeZone: 'UTC',
+        })
+    }
+
+    DB.workouts[indexForUpdate] = updatedWorkout
+    saveToDatabase(DB)
+
+    return updatedWorkout
+}
+
+const deleteOneWorkout = (workoutId) => {
+    const indexForDeletion = DB.workouts.findIndex(
+        (workout) => workoutId === workout.id
+    ) > -1
+
+    DB.workouts.splice(indexForDeletion, 1)
+    saveToDatabase(DB)
+}
+
 module.exports = { 
     getAllWorkouts,
-    createNewWorkout
+    createNewWorkout,
+    getOneWorkout,
+    updateOneWorkout,
+    deleteOneWorkout,
 }
