@@ -7,4 +7,4 @@ Express + node.js
 - **get all workouts**
 `loclahost:PORT/api/v1/workouts`
 - **get, delete, update workout**
- `loclahost:PORT/api/v1/workouts/ID`
+`loclahost:PORT/api/v1/workouts/ID`

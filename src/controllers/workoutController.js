@@ -1,8 +1,15 @@
 const workoutServices = require('../services/workoutService')
 
 const getAllWorkouts = (req, res) => {
-    const allWorkouts = workoutServices.getAllWorkouts()
-    res.send({ status: 'OK', data: allWorkouts })
+    try {
+        const allWorkouts = workoutServices.getAllWorkouts()
+        res.send({ status: 'OK', data: allWorkouts })
+    } catch (error) {
+        res.status(error?.status || 500).send({
+            status: 'FAILED',
+            data: { error: error?.message || error }
+        })
+    }
 }
 
 const getOneWorkout = (req, res) => {
@@ -10,10 +17,24 @@ const getOneWorkout = (req, res) => {
         params: { workoutId },
     } = req
 
-    if (!workoutId) return
+    if (!workoutId) {
+        res.status(400).send({
+            status: 'FAILED',
+            data: {
+                error: "Parameter ':workoutId' can not be empty"
+            }
+        })
+    }
 
-    const workout = workoutServices.getOneWorkout(workoutId)
-    res.send({ status: "OK", data: workout})
+    try {
+        const workout = workoutServices.getOneWorkout(workoutId)
+        res.send({ status: "OK", data: workout })
+    } catch (error) {
+        res.status(error?.status || 500).send({
+            status: 'FAILED',
+            data: { error: error?.message || error }
+        })
+    }
 }
 
 const createNewWorkout = (req, res) => {
@@ -26,7 +47,12 @@ const createNewWorkout = (req, res) => {
         !body.exercises ||
         !body.trainerTips
     ) {
-      return
+        res.send({
+            status: 'FAILED',
+            data: {
+                error: "One of the following keys is missing or is empty in request body: 'name', 'mode', 'equipment', 'exercises', 'trainerTips'"
+            }
+        })
     }
 
     const newWorkout = {
@@ -37,11 +63,20 @@ const createNewWorkout = (req, res) => {
         trainerTips: body.trainerTips,
     }
 
-    const createdWorkout = workoutServices.createNewWorkout(newWorkout)
-    res.status(201).send({
-        status: 'OK',
-        data: createdWorkout
-    })
+    try {
+        const createdWorkout = workoutServices.createNewWorkout(newWorkout)
+        res.status(201).send({
+            status: 'OK',
+            data: createdWorkout
+        })
+    } catch (error) {
+        res.status(error?.message || 500).send({
+            status: 'FAILED',
+            data: {
+                error: error?.message || error
+            }
+        })
+    }
 }
 
 const updateOneWorkout = (req, res) => {
@@ -50,10 +85,26 @@ const updateOneWorkout = (req, res) => {
         params: { workoutId },
     } = req
 
-    if (!workoutId) return
+    if (!workoutId) {
+        res.status(400).send({
+            status: 'FAILED',
+            data: {
+                error: "Parameter ':workoutId' can not be empty"
+            }
+        })
+    }
 
-    const updateWorkout = workoutServices.updateOneWorkout(workoutId, body)
-    res.send({status: 'OK', data: updateWorkout})
+    try {
+        const updateWorkout = workoutServices.updateOneWorkout(workoutId, body)
+        res.send({ status: 'OK', data: updateWorkout })
+    } catch (error) {
+        res.status(error?.message || 500).send({
+            status: 'FAILED',
+            data: {
+                error: error?.message || error
+            }
+        })
+    }
 }
 
 const deleteOneWorkout = (req, res) => {
@@ -61,10 +112,26 @@ const deleteOneWorkout = (req, res) => {
         params: { workoutId }
     } = req
 
-    if (!workoutId) return 
+    if (!workoutId) {
+        res.status(400).send({
+            status: 'FAILED',
+            data: {
+                error: "Parameter ':workoutId' can not be empty"
+            }
+        })
+    }
 
-    const deleteWorkout = workoutServices.deleteOneWorkout(workoutId)
-    res.status(204).send({ status: 'OK' })
+    try {
+        const deleteWorkout = workoutServices.deleteOneWorkout(workoutId)
+        res.status(204).send({ status: 'OK' })
+    } catch (error) {
+        res.status(error?.message || 500).send({
+            status: 'FAILED',
+            data: {
+                error: error?.message || error
+            }
+        })
+    }
 }
 
 module.exports = {
